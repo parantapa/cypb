@@ -1,0 +1,33 @@
+# encoding: utf-8
+"""
+Hard process timeout.
+
+NOTE: uses SIGALRM; so use of sleep calls are not allowed.
+"""
+
+from libc.stdio cimport printf
+from libc.stdlib cimport _exit
+from libc.signal cimport sighandler_t, SIG_DFL, SIGALRM, signal
+from posix.unistd cimport alarm
+
+cdef void timeout_handler(int signum):
+    printf("ctimeout: timeout handler received signal: %d\n", signum)
+    printf("ctimeout: excuting hard exit\n")
+    _exit(100)
+
+def set_timeout(unsigned seconds):
+    """
+    Setup the process to execute hard exit after given seconds"
+    """
+
+    printf("ctimeout: setting up timeout after %u seconds\n", seconds)
+    signal(SIGALRM, <sighandler_t> timeout_handler)
+    alarm(seconds)
+
+def unset_timeout():
+    """
+    Reset the hard exit handler.
+    """
+
+    alarm(0)
+    signal(SIGALRM, SIG_DFL)
