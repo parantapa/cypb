@@ -5,14 +5,14 @@ Hard process timeout.
 NOTE: uses SIGALRM; so use of sleep calls are not allowed.
 """
 
-from libc.stdio cimport printf
+from libc.stdio cimport printf, puts
 from libc.stdlib cimport _exit
 from libc.signal cimport sighandler_t, SIG_DFL, SIGALRM, signal
 from posix.unistd cimport alarm
 
 cdef void timeout_handler(int signum):
     printf("ctimeout: timeout handler received signal: %d\n", signum)
-    printf("ctimeout: excuting hard exit\n")
+    puts("ctimeout: excuting hard exit")
     _exit(100)
 
 def set_timeout(unsigned seconds):
